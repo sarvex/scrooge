@@ -68,7 +68,7 @@ class IncludeCode(Directive):
                 (encoding, filename))]
 
         comment = self.options.get('comment', '//')
-        marker = self.options.get('marker', comment + '#')
+        marker = self.options.get('marker', f'{comment}#')
         lenm = len(marker)
         if not section:
             section = self.options.get('section')
@@ -78,7 +78,7 @@ class IncludeCode(Directive):
         exclude = set(exclude_sections.split(',')) if exclude_sections else set()
         hideexcludes = 'hideexcludes' in self.options
         if section:
-            include |= set([section])
+            include |= {section}
         within = set()
         res = []
         excluding = False
@@ -87,11 +87,11 @@ class IncludeCode(Directive):
             if index >= 0:
                 section_name = line[index+lenm:].strip()
                 if section_name in within:
-                    within ^= set([section_name])
+                    within ^= {section_name}
                     if excluding and not (exclude & within):
                         excluding = False
                 else:
-                    within |= set([section_name])
+                    within |= {section_name}
                     if not excluding and (exclude & within):
                         excluding = True
                         if not hideexcludes:
